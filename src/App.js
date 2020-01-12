@@ -1,26 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
+import './Styles.css'
+import NewsGrid from './components/NewsGrid'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  state = {
+    articles: [],
+    loading: true
+  };
+
+  fetchData = () => {
+    const url = `https://paznews-backend.herokuapp.com/top_headlines?category=&sources=&q`
+    fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      this.setState({ articles: this.state.articles.concat(data.Articles), loading: false })
+    }
+  )
+  };
+
+  componentDidMount(){
+    this.fetchData();
+  }
+
+  render() {
+    const { articles } = this.state
+    return (
+      this.state.loading ? <div/> :
+        <div>
+        <NewsGrid articles={articles}/>
+        </div>
+    );
+  }
 }
 
 export default App;
